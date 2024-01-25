@@ -9,6 +9,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,12 +24,15 @@ public class SecurityConfig {
 	
 	private CustomerDetailsService customerDetailsService;
 	
+	private JwtAuthEntryPoint authEntryPoint;
+	
 	
 	
 	@Autowired
-	public SecurityConfig(CustomerDetailsService customerDetailsService) {
+	public SecurityConfig(CustomerDetailsService customerDetailsService,JwtAuthEntryPoint authEntryPoint) {
 
 		this.customerDetailsService = customerDetailsService;
+		this.authEntryPoint = authEntryPoint;
 	}
 
 
@@ -36,6 +40,10 @@ public class SecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http
 		.csrf(csrf -> csrf.disable())
+		.exceptionHandling((exceptionHandling) -> exceptionHandling
+				.authenticationEntryPoint(authEntryPoint)
+				)
+		.sessionManagement(sessionManagement -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		.authorizeHttpRequests( auth -> auth
 				
 				.requestMatchers("/todo/auth/**")
@@ -53,7 +61,7 @@ public class SecurityConfig {
 				.username("admin")
 				.password("password")
 				.roles("ADMIN")
-				.build();
+				.build(); 
 		
 		UserDetails user = User.builder()
 				.username("user")
