@@ -23,5 +23,19 @@ public class GlobalExceptionHandler {
 		
 		return new ResponseEntity<ErrorObject>(errorObject,HttpStatus.NOT_FOUND);
 	}
+	
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorObject> handleUserNotFound(UserNotFoundException ex, WebRequest request){
+		
+		ErrorObject errorObject = new ErrorObject();
+		
+		
+		errorObject.setMessage(ex.getMessage());
+		errorObject.setStatusCode(HttpStatus.NOT_FOUND.value());
+		errorObject.setTimestamp(new Date());
+		
+		return new ResponseEntity<ErrorObject>(errorObject,HttpStatus.NOT_FOUND);
+	}
 
 }
