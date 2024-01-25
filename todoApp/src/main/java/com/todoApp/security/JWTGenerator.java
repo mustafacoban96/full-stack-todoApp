@@ -3,6 +3,7 @@ package com.todoApp.security;
 import java.security.Key;
 import java.util.Date;
 
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
@@ -46,6 +47,21 @@ public class JWTGenerator {
 		return claims.getSubject();
 	}
 	
+	
+	public boolean validateToken(String token) {
+		
+		try {
+			Jwts.parserBuilder()
+			.setSigningKey(KEY)
+			.build()
+			.parseClaimsJws(token);
+			
+			return true;
+		}catch (Exception e) {
+			throw new AuthenticationCredentialsNotFoundException("JWT was expired or incorrect", e.fillInStackTrace());
+		}
+		
+	}
 	
 	
 	
