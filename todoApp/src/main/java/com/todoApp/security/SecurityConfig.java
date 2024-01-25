@@ -47,7 +47,7 @@ public class SecurityConfig {
 	}
 	
 	
-	@Bean
+	/*@Bean
 	public UserDetailsService users() {
 		UserDetails admin = User.builder()
 				.username("admin")
@@ -62,7 +62,7 @@ public class SecurityConfig {
 				.build();
 		
 		return new InMemoryUserDetailsManager(admin,user);
-	}
+	}*/
 	
 	
 	@Bean
