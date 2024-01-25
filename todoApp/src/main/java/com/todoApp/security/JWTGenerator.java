@@ -6,6 +6,7 @@ import java.util.Date;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -34,4 +35,24 @@ public class JWTGenerator {
 		System.out.println(token);
 		return token;
 	}
+	
+	
+	public String getUsernameFromJWT(String token) {
+		Claims claims = Jwts.parserBuilder()
+				.setSigningKey(KEY)
+				.build()
+				.parseClaimsJws(token)
+				.getBody();
+		return claims.getSubject();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
