@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -66,6 +67,7 @@ public class AuthController {
 		return new ResponseEntity<>("user is registered success!",HttpStatus.OK);
 	}
 	
+	@CrossOrigin(origins = "http://localhost:3000/")
 	@PostMapping("login")
 	public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
 		Authentication authentication = authenticationManager.authenticate(

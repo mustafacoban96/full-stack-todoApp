@@ -32,8 +32,8 @@ public class JWTGenerator {
 				.signWith(KEY, SignatureAlgorithm.HS512)
 				.compact();
 		
-		System.out.println("New token: ");
-		System.out.println(token);
+		//System.out.println("New token: ");
+		//System.out.println(token);
 		return token;
 	}
 	
