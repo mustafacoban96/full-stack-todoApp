@@ -1,6 +1,8 @@
 package com.todoApp.controllers;
 
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,10 +11,14 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.todoApp.dto.AuthResponseDTO;
@@ -23,6 +29,8 @@ import com.todoApp.models.UserEntity;
 import com.todoApp.repository.RoleRepository;
 import com.todoApp.repository.UserRepository;
 import com.todoApp.security.JWTGenerator;
+
+import jakarta.validation.Valid;
 
 
 
@@ -69,7 +77,7 @@ public class AuthController {
 	
 	@CrossOrigin(origins = "http://localhost:3000/")
 	@PostMapping("login")
-	public ResponseEntity<AuthResponseDTO> login(@RequestBody LoginDto loginDto){
+	public ResponseEntity<AuthResponseDTO> login(@Valid @RequestBody LoginDto loginDto){
 		Authentication authentication = authenticationManager.authenticate(
 				new UsernamePasswordAuthenticationToken(
 						loginDto.getUsername(), 
@@ -81,6 +89,22 @@ public class AuthController {
 		return new ResponseEntity<>(new AuthResponseDTO(token),HttpStatus.OK);
 	}
 	
+	
+	
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String, String> handleValidationException(MethodArgumentNotValidException ex) {
+		
+		Map<String, String> errors = new HashMap<>();
+		
+		ex.getBindingResult().getAllErrors().forEach((error) ->{
+			String fieldName = ((FieldError) error).getField();
+			String errorMessage = error.getDefaultMessage();
+			errors.put(fieldName, errorMessage);
+		});
+		
+		return errors;
+	}
 	
 	
 	
