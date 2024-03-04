@@ -15,26 +15,39 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.shepherd.todoAppV2.security.SecurityGlobalVariables;
+
 @Service
 public class JwtService {
+	
 	
 	
 	@Value("${jwt.key}")
 	private String SECRET;
 	
+	@Value("${jwt.expiration}")
+	private long jwtExpiration;
+	
+	@Value("${refresh.expiration}")
+	private long refreshExpiration;
+	
 	
 	public String generateToken(String username) {
 		Map<String, Object> claims = new HashMap<>();
 		
-		return createToken(claims,username);
+		return createToken(claims,username,jwtExpiration);
 	}
 	
-	private String createToken(Map<String, Object> claims, String username) {
+	
+
+	 
+	private String createToken(Map<String, Object> claims, String username, long jwtExpiration) {
+		
 		return Jwts.builder()
-				.setClaims(claims)
+				.setClaims(claims)    
 				.setSubject(username)
 				.setIssuedAt(new Date(System.currentTimeMillis()))
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 2))
+				.setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
 				.signWith(getSignKey(), SignatureAlgorithm.HS256).compact();
 	}
 	
@@ -70,6 +83,8 @@ public class JwtService {
 				.getBody();
 		return claims.getSubject();
 	}
+	
+	/* refresh Token part*/
 	
 
 }

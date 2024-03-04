@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.shepherd.todoAppV2.dto.CreateUserRequest;
+import com.shepherd.todoAppV2.dto.UserResponse;
 import com.shepherd.todoAppV2.models.User;
 import com.shepherd.todoAppV2.repository.UserRepository;
 
@@ -36,8 +37,14 @@ public class UserService implements UserDetailsService{
 	}
 
 	
-	public Optional<User> getByUsername(String username) {
-		return userRepository.findByUsername(username);
+	public UserResponse getByUsername(String username) {
+		Optional<User> user = userRepository.findByUsername(username);
+		
+		return UserToUserResponse(user);
+	}
+	
+	public boolean isUsernameTaken(String username) {
+		return userRepository.existsByUsername(username);
 	}
 
 	
@@ -56,4 +63,17 @@ public class UserService implements UserDetailsService{
 				
 		return userRepository.save(newUser);
 	}
+	
+	
+	private UserResponse UserToUserResponse(Optional<User> user) {
+		User user2 = user.get();
+		return new UserResponse(user2.getId(),user2.getName(),user2.getUsername(),user2.getAuthorities()) ;
+		
+	}
+	
+	
+	
+	
+	
+	
 }

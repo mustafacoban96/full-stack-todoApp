@@ -9,5 +9,7 @@ import com.shepherd.todoAppV2.models.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 	
 	Optional<User> findByUsername(String username);
+	boolean existsByUsername(String username);
+	
 
 }
