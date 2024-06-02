@@ -3,7 +3,9 @@ package com.shepherd.todoAppV2.service;
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -30,6 +32,8 @@ public class JwtService {
 	
 	@Value("${refresh.expiration}")
 	private long refreshExpiration;
+	
+	
 	
 	
 	public String generateToken(String username) {
@@ -60,6 +64,8 @@ public class JwtService {
 		String username = extractUsername(token);
 		Date expiration = extractExpiration(token);
 		
+		
+		
 		return userDetails.getUsername().equals(username) && expiration.after(new Date());
 	}
 	
@@ -74,6 +80,8 @@ public class JwtService {
 	}
 	
 	
+	
+	
 	public String extractUsername(String token) {
 		Claims claims = Jwts
 				.parserBuilder()
@@ -83,6 +91,11 @@ public class JwtService {
 				.getBody();
 		return claims.getSubject();
 	}
+	
+	
+	
+	
+	
 	
 	/* refresh Token part*/
 	

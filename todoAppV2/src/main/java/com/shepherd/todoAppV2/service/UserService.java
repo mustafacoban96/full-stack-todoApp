@@ -67,7 +67,7 @@ public class UserService implements UserDetailsService{
 	
 	private UserResponse UserToUserResponse(Optional<User> user) {
 		User user2 = user.get();
-		return new UserResponse(user2.getId(),user2.getName(),user2.getUsername(),user2.getAuthorities()) ;
+		return new UserResponse(user2.getId(),user2.getName(),user2.getUsername(),user2.getAuthorities());
 		
 	}
 	

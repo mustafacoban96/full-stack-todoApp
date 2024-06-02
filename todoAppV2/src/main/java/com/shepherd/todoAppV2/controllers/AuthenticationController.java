@@ -1,27 +1,30 @@
 package com.shepherd.todoAppV2.controllers;
 
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
 import com.shepherd.todoAppV2.dto.AuthRequest;
 import com.shepherd.todoAppV2.dto.AuthResponse;
 import com.shepherd.todoAppV2.dto.CreateUserRequest;
 import com.shepherd.todoAppV2.dto.UserResponse;
-import com.shepherd.todoAppV2.models.User;
 import com.shepherd.todoAppV2.service.JwtService;
+import com.shepherd.todoAppV2.service.TokenBlackListService;
 import com.shepherd.todoAppV2.service.UserService;
-
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -35,17 +38,20 @@ public class AuthenticationController {
 	private final UserService userService;
 	private final JwtService jwtService;
 	private AuthenticationManager authenticationManager;
+	private final TokenBlackListService tokenBlackListService;
 	
 	
-	public AuthenticationController(UserService userService, JwtService jwtService,AuthenticationManager authenticationManager) {
+	public AuthenticationController(UserService userService, JwtService jwtService,AuthenticationManager authenticationManager,
+			TokenBlackListService tokenBlackListService) {
 		
 		this.userService = userService;
 		this.jwtService = jwtService;
 		this.authenticationManager = authenticationManager;
+		this.tokenBlackListService = tokenBlackListService;
 	}
 	
 	@PostMapping("/register")
-	public ResponseEntity<String> register(@RequestBody CreateUserRequest request) {
+	public ResponseEntity<String> register(@Valid @RequestBody CreateUserRequest request) {
 		
 		if(userService.isUsernameTaken(request.username())) {
 			return new ResponseEntity<>("username is taken",HttpStatus.CONFLICT);
@@ -72,5 +78,13 @@ public class AuthenticationController {
 		log.info("invalid username " + request.username());
 		throw new UsernameNotFoundException("Invalid username {}" + request.username());
 	}
+	
+	@PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader(value="Authorization",required=false) String bearerToken) {
+		 
+        String token = bearerToken.substring(7);
+        tokenBlackListService.blacklistToken(token);
+        return new ResponseEntity<>("User logged out successfully", HttpStatus.OK);
+    }
 
 }

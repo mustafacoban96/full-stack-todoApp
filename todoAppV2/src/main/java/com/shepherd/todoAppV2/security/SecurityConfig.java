@@ -16,10 +16,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import com.shepherd.todoAppV2.models.Role;
+import com.shepherd.todoAppV2.service.TokenBlackListService;
 import com.shepherd.todoAppV2.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
+//https://howtodoinjava.com/spring-security/jwt-auth-vuejs-spring-boot-security/
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,14 +34,16 @@ public class SecurityConfig {
 	private final UserService userService;
 	private PasswordEncoder passwordEncoder;
 	private final JwtAuthEntryPoint jwtAuthEntryPoint;
+	private final TokenBlackListService tokenBlackListService;
 	
 	public SecurityConfig(JwtAuthFilter jwtAuthFilter, UserService userService, PasswordEncoder passwordEncoder,
-			JwtAuthEntryPoint jwtAuthEntryPoint) {
+			JwtAuthEntryPoint jwtAuthEntryPoint,TokenBlackListService tokenBlackListService) {
 		
 		this.jwtAuthFilter = jwtAuthFilter;
 		this.userService = userService;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtAuthEntryPoint = jwtAuthEntryPoint;
+		this.tokenBlackListService = tokenBlackListService;
 	}
 	
 	
@@ -57,6 +64,7 @@ public class SecurityConfig {
 				.sessionManagement(x -> x.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 				.authenticationProvider(authenticationProvider())
 				.addFilterBefore(jwtAuthFilter,UsernamePasswordAuthenticationFilter.class)
+				.addFilterBefore(new JwtBlacklistFilter(tokenBlackListService), JwtAuthFilter.class)
 				.build();
 	}
 	
