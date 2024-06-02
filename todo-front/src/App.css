@@ -1,0 +1,31 @@
+*{
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
+
+.login {
+  margin: 8%;
+  display: grid;
+  grid-template-columns: 1fr; /* Changed from 100px to 1fr for better responsiveness */
+  align-items: center;
+  padding: 2%;
+  row-gap: 15px;
+}
+
+.form-group {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Adjust this value as needed */
+}
+
+
+#token-area{
+  width: auto;
+  border: 2px solid palevioletred;
+  padding: 10px;
+  margin-bottom: 5px;
+  width: 100%;
+
+}
