@@ -11,7 +11,7 @@ public record CreateTodoRequest(
 		@Size(min = 2, max = 200, message = "Invalid activity")
 		String content
 		
-		//boş kayıt düzeltt
+		
 		
 		) {
 

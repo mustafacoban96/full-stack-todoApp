@@ -9,5 +9,6 @@ import com.shepherd.todoAppV2.models.User;
 
 public interface TodoRepository extends JpaRepository<Todo, Long>{
 	List<User> findByUserId(Long userId);
+	List<Todo> findAllByUserId(Long userId);
 
 }
